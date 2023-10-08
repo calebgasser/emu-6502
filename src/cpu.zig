@@ -78,12 +78,44 @@ pub const CPU = struct {
         this.registers.A = value_A;
     }
 
+    pub fn ldx_im(this: *CPU, mem: *Memory) !void {
+        var value_X = try this.fetch_byte(mem);
+        if (value_X == 0) {
+            this.flags.Z = 1;
+        } else {
+            this.flags.Z = 0;
+        }
+        if ((value_X & 0b10000000) > 0) {
+            this.flags.N = 1;
+        } else {
+            this.flags.N = 0;
+        }
+        this.registers.X = value_X;
+    }
+
+    pub fn ldy_im(this: *CPU, mem: *Memory) !void {
+        var value_Y = try this.fetch_byte(mem);
+        if (value_Y == 0) {
+            this.flags.Z = 1;
+        } else {
+            this.flags.Z = 0;
+        }
+        if ((value_Y & 0b10000000) > 0) {
+            this.flags.N = 1;
+        } else {
+            this.flags.N = 0;
+        }
+        this.registers.Y = value_Y;
+    }
+
     pub fn execute(this: *CPU, mem: *Memory) CpuError!void {
         while (this.cycles > 0) {
             var byte = try this.fetch_byte(mem);
             var byte_enum: OpCodes = @enumFromInt(byte);
             try switch (byte_enum) {
                 OpCodes.LDA_IM => this.lda_im(mem),
+                OpCodes.LDX_IM => this.ldx_im(mem),
+                OpCodes.LDY_IM => this.ldy_im(mem),
             };
         }
     }
