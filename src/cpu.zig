@@ -88,8 +88,6 @@ pub const CPU = struct {
         }
     }
 
-    pub fn LDA() void {}
-
     pub fn init() CPU {
         return CPU{ .cycles = 0, .SP = 0x00000000, .PC = 0x0000000000000000, .registers = .{
             .A = 0x0000,
