@@ -6,7 +6,7 @@ pub const MAX_MEM: u32 = 1024 * 64;
 pub const Memory = struct {
     Data: [MAX_MEM]u8,
 
-    pub fn init() Memory {
+    pub fn build() Memory {
         return Memory{
             .Data = [_]u8{0} ** MAX_MEM,
         };
@@ -20,12 +20,17 @@ pub const Memory = struct {
         this.Data[index] = value;
     }
 
+    pub fn set_word(this: *Memory, index: u32, value: u8) void {
+        this.Data[index] = value & 0xFF;
+        this.Data[index + 1] = (value >> 8);
+    }
+
     pub fn print_state(this: *Memory, from: u32, to: u32) void {
         if (from < this.Data.len and to < this.Data.len) {
             print("Memory Addresses [{d}-{d}]\n", .{ from, to });
             for (from..to) |index| {
-                print("{d}: 0x{X:0>4} ", .{ index, this.Data[index] });
-                if (index > 0 and index % 10 == 0) {
+                print("[0x{X}: 0x{X:0>4}] ", .{ index, this.Data[index] });
+                if (index != from and index % 4 == 0) {
                     print("\n", .{});
                 }
             }
