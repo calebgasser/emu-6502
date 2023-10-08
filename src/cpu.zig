@@ -68,10 +68,10 @@ pub const CPU = struct {
 
     pub fn fetch_word(this: *CPU, mem: *Memory) CpuError!u16 {
         // 6502 is little endian
-        var data = mem.read_byte(this.PC);
+        var data: u16 = mem.read_byte(this.PC);
         this.PC += 1;
         try this.consume_cycles(1);
-
+        print("Data: 0x{X}", .{data});
         data |= (mem.read_byte(this.PC) << 8);
         this.PC += 1;
         try this.consume_cycles(1);
@@ -149,7 +149,7 @@ pub const CPU = struct {
     }
 
     pub fn jsr(this: *CPU, mem: *Memory) !void {
-        var sub_addr = this.fetch_word(mem);
+        var sub_addr = try this.fetch_word(mem);
         mem.set_word(this.SP, this.PC - 1);
         try this.consume_cycles(2);
         this.PC = sub_addr;
@@ -170,7 +170,7 @@ pub const CPU = struct {
                 OpCodes.LDA_ZPX => this.lda_zpx(mem),
                 OpCodes.LDX_IM => this.ldx_im(mem),
                 OpCodes.LDY_IM => this.ldy_im(mem),
-                OpCodes.JSR => this.ldy_im(mem),
+                OpCodes.JSR => this.jsr(mem),
             };
         }
     }

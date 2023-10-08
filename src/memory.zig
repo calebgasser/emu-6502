@@ -20,7 +20,7 @@ pub const Memory = struct {
         this.Data[index] = value;
     }
 
-    pub fn set_word(this: *Memory, index: u32, value: u8) void {
+    pub fn set_word(this: *Memory, index: u32, value: u16) void {
         this.Data[index] = value & 0xFF;
         this.Data[index + 1] = (value >> 8);
     }
